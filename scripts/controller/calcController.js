@@ -46,25 +46,50 @@ class CalcController {
         return (['+','-','*','/','%'].indexOf(value) > -1);
     }
 
+    pushOperation(value){
+        this._operation.push(value);
+        if(this._operation.length > 3){
+
+
+            this.calc();
+
+        }
+    }
+
+    calc(){
+        let last = this._operation.pop();
+        let result = eval(this._operation.join(''));
+        this._operation = [result, last];
+    }
+
+    setLastNumberToDisplay(){
+
+    }
+
     addOperation(value){
+
+        console.log('A', value, isNaN(this.getLastOperation()));
+
         if(isNaN(this.getLastOperation())){
 
             if (this.isOperator(value)){
-
                 this.setLastOperation(value);
-
             } else if (isNaN(value)){
-                console.log(value);
+                console.log('Outra coisa',value);
             } else {
-                this._operation.push(value);
+                this.pushOperation(value);
             }
         } else {
-            let newValue = this.getLastOperation().toString() + value.toString();
-            this.setLastOperation(newValue);
+
+            if(this.isOperator(value)){
+                this.pushOperation(value);
+            } else {
+                let newValue = this.getLastOperation().toString() + value.toString();
+                this.setLastOperation(newValue);
+
+                this.setLastNumberToDisplay();
+            }
         }
-
-        console.log(this._operation);
-
     }
 
     setError(){
@@ -83,13 +108,13 @@ class CalcController {
             case 'soma':
                 this.addOperation('+');
                 break;
-            case 'subtração':
+            case 'subtracao':
                 this.addOperation('-');
                 break;
-            case 'divisão':
+            case 'divisao':
                 this.addOperation('/');
                 break;
-            case 'multiplicação':
+            case 'multiplicacao':
                 this.addOperation('*');
                 break;
             case 'porcento':
@@ -124,7 +149,7 @@ class CalcController {
        buttons.forEach((btn, index)=>{
            this.addEventListenerAll(btn, 'click drag', e => {
                let textBtn = btn.className.baseVal.replace("btn-","");
-               this.execBtn();
+               this.execBtn(textBtn);
            });
 
            this.addEventListenerAll(btn, 'mouseover mouseup mousedown', e => {
